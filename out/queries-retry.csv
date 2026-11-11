@@ -1,0 +1,27 @@
+id,kind,province_new,area,query,depth,grid_bbox,geo,zoom
+q010,province,Điện Biên,Điện Biên,sân pickleball Điện Biên,3,,"21.386,103.017",12
+q082,province,Đồng Nai,Đồng Nai,sân pickleball Đồng Nai,3,,"10.945,106.824",12
+q105,old,Tuyên Quang,Hà Giang,sân pickleball Hà Giang,2,,"22.823,104.983",12
+q110,old,Thái Nguyên,Bắc Kạn,pickleball Bắc Kạn,2,,"22.147,105.835",12
+q127,old,Đà Nẵng,Quảng Nam,sân pickleball Quảng Nam,2,,"15.573,108.474",12
+q128,old,Đà Nẵng,Quảng Nam,pickleball Quảng Nam,2,,"15.573,108.474",12
+q131,old,Gia Lai,Bình Định,sân pickleball Bình Định,2,,"13.776,109.223",12
+q132,old,Gia Lai,Bình Định,pickleball Bình Định,2,,"13.776,109.223",12
+q142,old,Hồ Chí Minh,Bình Dương,pickleball Bình Dương,2,,"10.980,106.651",12
+q143,old,Hồ Chí Minh,Bà Rịa - Vũng Tàu,sân pickleball Bà Rịa - Vũng Tàu,2,,"10.346,107.084",12
+q144,old,Hồ Chí Minh,Bà Rịa - Vũng Tàu,pickleball Bà Rịa - Vũng Tàu,2,,"10.346,107.084",12
+q145,old,Đồng Nai,Bình Phước,sân pickleball Bình Phước,2,,"11.535,106.883",12
+q146,old,Đồng Nai,Bình Phước,pickleball Bình Phước,2,,"11.535,106.883",12
+q147,old,Tây Ninh,Long An,sân pickleball Long An,2,,"10.535,106.413",12
+q148,old,Tây Ninh,Long An,pickleball Long An,2,,"10.535,106.413",12
+q149,old,Cần Thơ,Sóc Trăng,sân pickleball Sóc Trăng,2,,"9.603,105.980",12
+q150,old,Cần Thơ,Sóc Trăng,pickleball Sóc Trăng,2,,"9.603,105.980",12
+q151,old,Cần Thơ,Hậu Giang,sân pickleball Hậu Giang,2,,"9.784,105.470",12
+q152,old,Cần Thơ,Hậu Giang,pickleball Hậu Giang,2,,"9.784,105.470",12
+q157,old,Đồng Tháp,Tiền Giang,sân pickleball Tiền Giang,2,,"10.360,106.360",12
+q162,old,An Giang,Kiên Giang,pickleball Kiên Giang,2,,"10.012,105.080",12
+q190,district,Hồ Chí Minh,Bến Cát,"sân pickleball Bến Cát, Hồ Chí Minh",2,,"11.155,106.585",14
+q200,district,Hà Nội,Cầu Giấy,"sân pickleball Cầu Giấy, Hà Nội",2,,"21.033,105.795",14
+q235,district,Hải Phòng,Dương Kinh,"sân pickleball Dương Kinh, Hải Phòng",2,,"20.790,106.680",14
+q246,district,Cần Thơ,Thốt Nốt,"sân pickleball Thốt Nốt, Cần Thơ",2,,"10.270,105.540",14
+q249,district,Cần Thơ,Ngã Bảy,"sân pickleball Ngã Bảy, Cần Thơ",2,,"9.815,105.820",14

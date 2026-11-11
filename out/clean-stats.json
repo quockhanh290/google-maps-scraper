@@ -1,38 +1,162 @@
 {
-  "raw_rows": 187,
-  "unique_place_id": 187,
-  "after_filter": 176,
-  "after_dedup": 176,
+  "raw_rows": 2902,
+  "unique_place_id": 2037,
+  "after_filter": 1970,
+  "after_dedup": 1958,
   "rejected_by_reason": [
     [
       "cửa hàng/nhà cung cấp dụng cụ, không phải sân",
-      10
+      37
+    ],
+    [
+      "không liên quan pickleball",
+      26
+    ],
+    [
+      "trùng (tên giống, < 150 m)",
+      12
     ],
     [
       "tên cho thấy cửa hàng dụng cụ",
+      2
+    ],
+    [
+      "không có toạ độ",
+      1
+    ],
+    [
+      "sân tennis thuần, không nhắc pickleball",
       1
     ]
   ],
   "by_province": [
     [
+      "Hồ Chí Minh",
+      412
+    ],
+    [
       "Hà Nội",
-      61
+      311
+    ],
+    [
+      "Đà Nẵng",
+      137
+    ],
+    [
+      "Hải Phòng",
+      104
+    ],
+    [
+      "Phú Thọ",
+      59
+    ],
+    [
+      "Lâm Đồng",
+      55
+    ],
+    [
+      "Bắc Ninh",
+      51
+    ],
+    [
+      "Cần Thơ",
+      46
+    ],
+    [
+      "Hưng Yên",
+      44
+    ],
+    [
+      "Đắk Lắk",
+      43
+    ],
+    [
+      "Ninh Bình",
+      42
+    ],
+    [
+      "Khánh Hòa",
+      39
     ],
     [
       "Quảng Ninh",
+      39
+    ],
+    [
+      "An Giang",
+      38
+    ],
+    [
+      "Quảng Ngãi",
+      37
+    ],
+    [
+      "Đồng Nai",
+      37
+    ],
+    [
+      "Hà Tĩnh",
+      36
+    ],
+    [
+      "Quảng Trị",
+      36
+    ],
+    [
+      "Thanh Hóa",
       34
     ],
     [
+      "Gia Lai",
+      32
+    ],
+    [
+      "Nghệ An",
+      32
+    ],
+    [
+      "Đồng Tháp",
+      32
+    ],
+    [
+      "Tây Ninh",
+      30
+    ],
+    [
+      "Lào Cai",
+      29
+    ],
+    [
+      "Cà Mau",
+      28
+    ],
+    [
+      "Vĩnh Long",
+      28
+    ],
+    [
       "Huế",
-      24
+      27
+    ],
+    [
+      "Thái Nguyên",
+      27
     ],
     [
       "Lạng Sơn",
-      23
+      24
+    ],
+    [
+      "Tuyên Quang",
+      24
     ],
     [
       "Sơn La",
       20
+    ],
+    [
+      "Cao Bằng",
+      15
     ],
     [
       "Điện Biên",
@@ -41,56 +165,56 @@
     [
       "Lai Châu",
       4
-    ],
-    [
-      "Đà Nẵng",
-      3
-    ],
-    [
-      "Hồ Chí Minh",
-      1
     ]
   ],
   "confidence": [
     [
-      "medium",
-      61
+      "high",
+      814
     ],
     [
-      "high",
-      59
+      "medium",
+      645
     ],
     [
       "low",
-      56
+      499
     ]
   ],
   "province_source": [
     [
       "address",
-      176
+      1954
+    ],
+    [
+      "query",
+      3
+    ],
+    [
+      "nearest",
+      1
     ]
   ],
   "filled": {
-    "name": 176,
-    "address": 176,
-    "city": 176,
-    "province_new": 176,
-    "province_old": 0,
-    "lat": 176,
-    "lng": 176,
-    "phone": 140,
-    "hours_open": 136,
-    "hours_close": 136,
+    "name": 1958,
+    "address": 1954,
+    "city": 1958,
+    "province_new": 1958,
+    "province_old": 9,
+    "lat": 1958,
+    "lng": 1958,
+    "phone": 1564,
+    "hours_open": 1514,
+    "hours_close": 1514,
     "price_per_hour": 0,
-    "booking_url": 39,
-    "google_maps_url": 176,
-    "rating": 160,
-    "rating_count": 160,
-    "place_id": 176,
-    "category": 176,
-    "retrieved_at": 176,
-    "confidence": 176,
-    "notes": 61
+    "booking_url": 74,
+    "google_maps_url": 1958,
+    "rating": 1781,
+    "rating_count": 1781,
+    "place_id": 1958,
+    "category": 1946,
+    "retrieved_at": 1958,
+    "confidence": 1958,
+    "notes": 993
   }
 }

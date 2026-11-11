@@ -14,6 +14,9 @@
 Env:
   GMS_BIN                 path to the scraper binary (default: bin/gms)
   GMS_WORKDIR             scratch dir for unsanitized output (default: /tmp/gms)
+  GMS_MANIFEST            manifest to run (default: out/queries-manifest.csv);
+                          used to re-run failed queries from out/queries-retry.csv
+  GMS_BATCH_PREFIX        output file prefix (default: batch; use "retry" for re-runs)
   PLAYWRIGHT_DRIVER_PATH  / PLAYWRIGHT_BROWSERS_PATH are passed through.
 """
 
@@ -32,7 +35,7 @@ RAW = OUT / "raw"
 
 BATCH_SIZE = 20
 CONCURRENCY = 2
-PAUSE_BETWEEN_BATCHES_S = 45
+PAUSE_BETWEEN_BATCHES_S = int(os.environ.get("GMS_PAUSE_S", "45"))
 INACTIVITY = "90s"
 LANG = "vi"
 GRID_CELL_KM = 4
@@ -64,7 +67,8 @@ def make_batches(rows):
                 current = []
             batches.append([r])
             continue
-        if current and (len(current) >= BATCH_SIZE or current[0]["depth"] != r["depth"]):
+        if current and (len(current) >= BATCH_SIZE or current[0]["depth"] != r["depth"]
+                        or current[0].get("geo", "") != r.get("geo", "")):
             batches.append(current)
             current = []
         current.append(r)
@@ -96,7 +100,9 @@ def main() -> int:
     work.mkdir(parents=True, exist_ok=True)
     RAW.mkdir(parents=True, exist_ok=True)
 
-    rows = list(csv.DictReader(open(OUT / "queries-manifest.csv", encoding="utf-8")))
+    manifest = pathlib.Path(os.environ.get("GMS_MANIFEST", OUT / "queries-manifest.csv"))
+    prefix = os.environ.get("GMS_BATCH_PREFIX", "batch")
+    rows = list(csv.DictReader(open(manifest, encoding="utf-8")))
     batches = make_batches(rows)
     print(f"{len(rows)} queries in {len(batches)} batches", flush=True)
 
@@ -106,7 +112,7 @@ def main() -> int:
         done_ids = {r["batch"] for r in csv.DictReader(open(status_path, encoding="utf-8"))}
 
     for i, batch in enumerate(batches, start=1):
-        bid = f"batch-{i:03d}"
+        bid = f"{prefix}-{i:03d}"
         dst = RAW / f"{bid}.jsonl"
         if bid in done_ids and dst.exists():
             continue
@@ -121,6 +127,9 @@ def main() -> int:
             "-lang", LANG, "-depth", batch[0]["depth"], "-c", str(CONCURRENCY),
             "-exit-on-inactivity", INACTIVITY,
         ]
+        if batch[0].get("geo"):
+            # Centre the map on the area; needed because the egress IP is outside Vietnam.
+            cmd += ["-geo", batch[0]["geo"], "-zoom", batch[0].get("zoom") or str(GRID_ZOOM)]
         if batch[0]["kind"] == "grid":
             cmd += ["-grid-bbox", batch[0]["grid_bbox"], "-grid-cell", str(GRID_CELL_KM),
                     "-zoom", str(GRID_ZOOM)]

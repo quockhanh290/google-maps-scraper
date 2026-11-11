@@ -2,7 +2,7 @@
 """Clean raw Google Maps results into pickleball court candidates.
 
 Inputs  (all under out/):
-  raw/batch-*.jsonl      sanitized scraper output (see run_batches.py)
+  raw/batch-*.jsonl, raw/retry-*.jsonl  sanitized scraper output (see run_batches.py)
   raw/batches.csv        batch log (used for retrieved_at)
   queries-manifest.csv   query id -> province of the query
   tinh-34.csv            34 new provinces with their former provinces
@@ -61,10 +61,18 @@ COACH_CATS = ["huan luyen vien", "truong day", "lop hoc", "giao vien", "coach"]
 TENNIS_CATS = ["san tennis", "san quan vot", "cau lac bo quan vot", "tennis court"]
 CLUB_ONLY_CATS = ["cau lac bo the thao", "sports club"]
 
+# Host substrings of real booking sites. Social links (facebook, zalo, ...) never count.
 BOOKING_HOSTS = [
-    "alobo", "datsan", "dat-san", "datlich", "booking", "book", "reserve",
-    "sporta", "playo", "courtreserve", "playbyplay", "pickleplay", "lich",
+    "alobo", "datsan", "dat-san", "datlich", "bookingsport", "courtbooking",
+    "booking", "courtreserve", "playo", "reserve",
 ]
+SOCIAL_HOSTS = ["facebook", "fb.com", "zalo", "tiktok", "instagram", "youtu", "wa.me", "google.com"]
+
+# Pickleball and common misspellings seen in place names (normalized text).
+PB_NAME_RE = re.compile(
+    r"pickleball|pickle ball|pickcleball|pikeball|pikleball|pickellball|pickelball|"
+    r"pickeball|pickerball|picklebal\b|pickle\b"
+)
 
 
 def strip_accents(s: str) -> str:
@@ -157,12 +165,13 @@ def classify(rec):
     cat_text = " | ".join(cats)
     desc = norm(" ".join(filter(None, [rec.get("description") or "",
                                         json.dumps(rec.get("about") or "", ensure_ascii=False)])))
-    pb_name = "pickleball" in title or "pickle ball" in title or "pickerball" in title
+    pb_name = bool(PB_NAME_RE.search(title))
     pb_cat = "pickleball" in cat_text
     court_cat_primary = primary in ("san pickleball", "pickleball court")
     court_cat_any = any(c in ("san pickleball", "pickleball court") for c in cats)
     venue = has_any(cat_text, VENUE_CATS)
-    store_primary = has_any(primary, STORE_CATS)
+    # "Cửa hàng cà phê" (cafe) is not an equipment store; many courts are cafes.
+    store_primary = has_any(primary, STORE_CATS) and "ca phe" not in primary
     coach_primary = has_any(primary, COACH_CATS)
     status = norm(rec.get("status"))
     name_says_court = bool(re.search(r"\b(san|court|courts|arena|center|centre|park|complex)\b", title))
@@ -303,7 +312,9 @@ def booking_url(rec):
     site = rec.get("web_site") or ""
     host = urllib.parse.urlparse(site).netloc.lower()
     path = urllib.parse.urlparse(site).path.lower()
-    if site and (any(k in host for k in BOOKING_HOSTS) or any(k in path for k in ("book", "dat-san", "datsan"))):
+    if not site or any(k in host for k in SOCIAL_HOSTS):
+        return ""
+    if any(k in host for k in BOOKING_HOSTS) or any(k in path for k in ("booking", "dat-san", "datsan")):
         return site
     return ""
 
@@ -333,7 +344,7 @@ def main() -> int:
             batch_time[r["batch"]] = r["started_at"]
 
     raw = []
-    for f in sorted((OUT / "raw").glob("batch-*.jsonl")):
+    for f in sorted([*(OUT / "raw").glob("batch-*.jsonl"), *(OUT / "raw").glob("retry-*.jsonl")]):
         retrieved = batch_time.get(f.stem, "")
         for line in open(f, encoding="utf-8"):
             if line.strip():
