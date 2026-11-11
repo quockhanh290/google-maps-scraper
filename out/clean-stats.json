@@ -1,0 +1,96 @@
+{
+  "raw_rows": 187,
+  "unique_place_id": 187,
+  "after_filter": 176,
+  "after_dedup": 176,
+  "rejected_by_reason": [
+    [
+      "cửa hàng/nhà cung cấp dụng cụ, không phải sân",
+      10
+    ],
+    [
+      "tên cho thấy cửa hàng dụng cụ",
+      1
+    ]
+  ],
+  "by_province": [
+    [
+      "Hà Nội",
+      61
+    ],
+    [
+      "Quảng Ninh",
+      34
+    ],
+    [
+      "Huế",
+      24
+    ],
+    [
+      "Lạng Sơn",
+      23
+    ],
+    [
+      "Sơn La",
+      20
+    ],
+    [
+      "Điện Biên",
+      6
+    ],
+    [
+      "Lai Châu",
+      4
+    ],
+    [
+      "Đà Nẵng",
+      3
+    ],
+    [
+      "Hồ Chí Minh",
+      1
+    ]
+  ],
+  "confidence": [
+    [
+      "medium",
+      61
+    ],
+    [
+      "high",
+      59
+    ],
+    [
+      "low",
+      56
+    ]
+  ],
+  "province_source": [
+    [
+      "address",
+      176
+    ]
+  ],
+  "filled": {
+    "name": 176,
+    "address": 176,
+    "city": 176,
+    "province_new": 176,
+    "province_old": 0,
+    "lat": 176,
+    "lng": 176,
+    "phone": 140,
+    "hours_open": 136,
+    "hours_close": 136,
+    "price_per_hour": 0,
+    "booking_url": 39,
+    "google_maps_url": 176,
+    "rating": 160,
+    "rating_count": 160,
+    "place_id": 176,
+    "category": 176,
+    "retrieved_at": 176,
+    "confidence": 176,
+    "notes": 61
+  }
+}
