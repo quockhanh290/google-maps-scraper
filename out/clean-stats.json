@@ -211,7 +211,7 @@
     "hours_open": 1571,
     "hours_close": 1571,
     "price_per_hour": 0,
-    "booking_url": 78,
+    "booking_url": 100,
     "google_maps_url": 2040,
     "rating": 1855,
     "rating_count": 1855,
@@ -219,6 +219,6 @@
     "category": 2027,
     "retrieved_at": 2040,
     "confidence": 2040,
-    "notes": 1051
+    "notes": 1055
   }
 }

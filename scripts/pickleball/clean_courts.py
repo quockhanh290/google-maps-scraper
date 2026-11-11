@@ -303,8 +303,10 @@ def parse_price(rec):
 
 
 def booking_url(rec):
-    res = rec.get("reservations")
-    if isinstance(res, list):
+    # Google lists booking partners (e.g. alobo.vn) under reservations / order_online.
+    for res in (rec.get("reservations"), rec.get("order_online")):
+        if not isinstance(res, list):
+            continue
         for r in res:
             link = (r or {}).get("link") if isinstance(r, dict) else None
             if link:

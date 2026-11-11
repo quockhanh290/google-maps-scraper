@@ -123,8 +123,9 @@ Lý do loại (`loai-bo.csv`):
 | Cột | Ghi chú |
 |---|---|
 | `price_per_hour` | **Luôn trống.** Google Maps không có dữ liệu giá; script chỉ điền khi mô tả ghi rõ “…đ/giờ” và không gặp trường hợp nào. |
-| `booking_url` | Chỉ 78 dòng, đều là trang đặt sân thật (`datlich.alobo.vn`, `datlich.net`, `datsan.club`, …). Link Facebook/Zalo/website khác nằm trong `notes` (dạng `website: …`). |
+| `booking_url` | 100 dòng: link đặt sân Google trả về trong mục “đặt chỗ / đặt online” (alobo.vn), hoặc website là trang đặt sân (`datlich.alobo.vn`, `datlich.net`, `datsan.club`, …). Link Facebook/Zalo/website khác nằm trong `notes` (dạng `website: …`). |
 | `hours_open` / `hours_close` | Có ở 1.571 dòng. Nếu giờ khác nhau theo ngày, lấy khung phổ biến nhất và ghi đủ trong `notes`. “Mở cửa cả ngày” được ghi là `00:00`–`23:59`. Nhiều khung trong một ngày thì lấy giờ mở sớm nhất và giờ đóng muộn nhất (ghi đủ trong `notes`). |
+| `address` | Có ở 2.036/2.040 dòng (4 dòng trống). 468 địa chỉ bắt đầu bằng Plus Code (vd. `X2M3+CM …, Phường, Tỉnh`) vì chủ sân không nhập số nhà/tên đường — vẫn định vị được nhưng nên bổ sung địa chỉ chữ khi duyệt. |
 | `province_old` | Chỉ 10 dòng: hầu hết địa chỉ trên Google đã dùng tên tỉnh mới. Cột này chỉ được điền khi địa chỉ còn ghi tên tỉnh cũ. |
 | `province_new` / `city` | Suy từ thành phần cuối của địa chỉ (2.036 dòng). 1 dòng suy từ sân gần nhất (< 15 km) và 3 dòng suy từ truy vấn, đều có ghi chú trong `notes`. |
 | `phone` | Có ở 1.629 dòng, định dạng `+84 …` như trên Google. |
