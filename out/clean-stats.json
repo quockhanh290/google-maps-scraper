@@ -1,0 +1,224 @@
+{
+  "raw_rows": 3134,
+  "unique_place_id": 2137,
+  "after_filter": 2049,
+  "after_dedup": 2037,
+  "rejected_by_reason": [
+    [
+      "cửa hàng/nhà cung cấp dụng cụ, không phải sân",
+      45
+    ],
+    [
+      "không liên quan pickleball",
+      34
+    ],
+    [
+      "trùng (tên giống, < 150 m)",
+      12
+    ],
+    [
+      "tên cho thấy cửa hàng dụng cụ",
+      3
+    ],
+    [
+      "toạ độ nằm ngoài Việt Nam (Vapy, Saravane, Lào) — ghim sai trên Google",
+      3
+    ],
+    [
+      "không có toạ độ",
+      1
+    ],
+    [
+      "sân tennis thuần, không nhắc pickleball",
+      1
+    ],
+    [
+      "huấn luyện viên/lớp học, không phải sân",
+      1
+    ]
+  ],
+  "by_province": [
+    [
+      "Hồ Chí Minh",
+      423
+    ],
+    [
+      "Hà Nội",
+      311
+    ],
+    [
+      "Đà Nẵng",
+      142
+    ],
+    [
+      "Hải Phòng",
+      104
+    ],
+    [
+      "Phú Thọ",
+      59
+    ],
+    [
+      "Lâm Đồng",
+      55
+    ],
+    [
+      "Đồng Nai",
+      54
+    ],
+    [
+      "Bắc Ninh",
+      51
+    ],
+    [
+      "Gia Lai",
+      51
+    ],
+    [
+      "Cần Thơ",
+      50
+    ],
+    [
+      "An Giang",
+      45
+    ],
+    [
+      "Hưng Yên",
+      44
+    ],
+    [
+      "Tây Ninh",
+      43
+    ],
+    [
+      "Ninh Bình",
+      42
+    ],
+    [
+      "Đắk Lắk",
+      42
+    ],
+    [
+      "Khánh Hòa",
+      39
+    ],
+    [
+      "Quảng Ninh",
+      39
+    ],
+    [
+      "Quảng Ngãi",
+      37
+    ],
+    [
+      "Hà Tĩnh",
+      36
+    ],
+    [
+      "Quảng Trị",
+      36
+    ],
+    [
+      "Đồng Tháp",
+      36
+    ],
+    [
+      "Thanh Hóa",
+      34
+    ],
+    [
+      "Nghệ An",
+      32
+    ],
+    [
+      "Lào Cai",
+      29
+    ],
+    [
+      "Cà Mau",
+      28
+    ],
+    [
+      "Thái Nguyên",
+      28
+    ],
+    [
+      "Huế",
+      27
+    ],
+    [
+      "Vĩnh Long",
+      27
+    ],
+    [
+      "Lạng Sơn",
+      24
+    ],
+    [
+      "Tuyên Quang",
+      24
+    ],
+    [
+      "Sơn La",
+      20
+    ],
+    [
+      "Cao Bằng",
+      15
+    ],
+    [
+      "Điện Biên",
+      6
+    ],
+    [
+      "Lai Châu",
+      4
+    ]
+  ],
+  "confidence": [
+    [
+      "high",
+      836
+    ],
+    [
+      "medium",
+      668
+    ],
+    [
+      "low",
+      533
+    ]
+  ],
+  "province_source": [
+    [
+      "address",
+      2036
+    ],
+    [
+      "nearest",
+      1
+    ]
+  ],
+  "filled": {
+    "name": 2037,
+    "address": 2037,
+    "city": 2037,
+    "province_new": 2037,
+    "province_old": 10,
+    "lat": 2037,
+    "lng": 2037,
+    "phone": 1627,
+    "hours_open": 1571,
+    "hours_close": 1571,
+    "price_per_hour": 0,
+    "booking_url": 100,
+    "google_maps_url": 2037,
+    "rating": 1853,
+    "rating_count": 1853,
+    "place_id": 2037,
+    "category": 2024,
+    "retrieved_at": 2037,
+    "confidence": 2037,
+    "notes": 1407
+  }
+}
