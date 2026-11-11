@@ -1,8 +1,8 @@
 {
   "raw_rows": 3134,
   "unique_place_id": 2137,
-  "after_filter": 2052,
-  "after_dedup": 2040,
+  "after_filter": 2049,
+  "after_dedup": 2037,
   "rejected_by_reason": [
     [
       "cửa hàng/nhà cung cấp dụng cụ, không phải sân",
@@ -21,6 +21,10 @@
       3
     ],
     [
+      "toạ độ nằm ngoài Việt Nam (Vapy, Saravane, Lào) — ghim sai trên Google",
+      3
+    ],
+    [
       "không có toạ độ",
       1
     ],
@@ -36,7 +40,7 @@
   "by_province": [
     [
       "Hồ Chí Minh",
-      424
+      423
     ],
     [
       "Hà Nội",
@@ -87,11 +91,11 @@
       43
     ],
     [
-      "Đắk Lắk",
-      43
+      "Ninh Bình",
+      42
     ],
     [
-      "Ninh Bình",
+      "Đắk Lắk",
       42
     ],
     [
@@ -139,11 +143,11 @@
       28
     ],
     [
-      "Vĩnh Long",
-      28
+      "Huế",
+      27
     ],
     [
-      "Huế",
+      "Vĩnh Long",
       27
     ],
     [
@@ -178,11 +182,11 @@
     ],
     [
       "medium",
-      669
+      668
     ],
     [
       "low",
-      535
+      533
     ]
   ],
   "province_source": [
@@ -191,34 +195,30 @@
       2036
     ],
     [
-      "query",
-      3
-    ],
-    [
       "nearest",
       1
     ]
   ],
   "filled": {
-    "name": 2040,
-    "address": 2036,
-    "city": 2040,
-    "province_new": 2040,
+    "name": 2037,
+    "address": 2037,
+    "city": 2037,
+    "province_new": 2037,
     "province_old": 10,
-    "lat": 2040,
-    "lng": 2040,
-    "phone": 1629,
+    "lat": 2037,
+    "lng": 2037,
+    "phone": 1627,
     "hours_open": 1571,
     "hours_close": 1571,
     "price_per_hour": 0,
     "booking_url": 100,
-    "google_maps_url": 2040,
-    "rating": 1855,
-    "rating_count": 1855,
-    "place_id": 2040,
-    "category": 2027,
-    "retrieved_at": 2040,
-    "confidence": 2040,
-    "notes": 1353
+    "google_maps_url": 2037,
+    "rating": 1853,
+    "rating_count": 1853,
+    "place_id": 2037,
+    "category": 2024,
+    "retrieved_at": 2037,
+    "confidence": 2037,
+    "notes": 1407
   }
 }

@@ -441,6 +441,40 @@ def iso_utc(ts: str) -> str:
     return re.sub(r"\+0000$|\+00:00$", "Z", ts or "")
 
 
+STREET_RE = re.compile(
+    r"\d|\b(Đường|Phố|Ngõ|Ngách|Hẻm|Kiệt|Quốc lộ|Tỉnh lộ|Đường tỉnh|Đại lộ|ĐT|QL|DT)\b", re.IGNORECASE)
+AREA_RE = re.compile(
+    r"^(Thôn|Ấp|Xóm|Bản|Làng|Khu|Khóm|Tổ|Khu phố|Khu dân cư|Khu đô thị|Khu du lịch|Khu công nghiệp|KDC|KĐT|KCN)\b",
+    re.IGNORECASE)
+OSM_MAX_DIST_M = 300  # ignore an OSM street farther than this from the court
+
+
+def osm_street_prefix(rec, osm, addr_norm):
+    """Street part from the OSM cache for courts Google gave no street for."""
+    raw = nfc(rec.get("address") or "")
+    if raw and not PLUS_CODE_RE.match(raw):
+        return ""
+    g = osm.get(rec.get("place_id") or "")
+    if not g or g.get("osm_lat") is None:
+        return ""
+    if not addr_norm:
+        # Google gave nothing at all: use OSM's full address minus country / postcode.
+        parts = [p.strip() for p in nfc(g.get("display_name", "")).split(",")]
+        parts = [re.sub(r"^(Thành phố|Tỉnh)\s+", "", p) for p in parts
+                 if p and norm(p) not in ("viet nam", "vietnam") and not p.isdigit()]
+        return ", ".join(parts)
+    if haversine_m((rec["latitude"], rec["longtitude"]), (g["osm_lat"], g["osm_lng"])) > OSM_MAX_DIST_M:
+        return ""
+    lead = [p.strip() for p in addr_norm.split(",")[:-2]]  # everything before ward + province
+    # Only add a street when Google's leading parts are clearly areas (Thôn, Ấp, Khu ...);
+    # a bare name such as "Nguyễn Huệ" may already be the street.
+    if any(STREET_RE.search(p) or not AREA_RE.match(p) for p in lead):
+        return ""
+    street = " ".join(p for p in (nfc(g.get("house_number", "")), nfc(g.get("road", ""))) if p)
+    parts = [p for p in (street, nfc(g.get("area", ""))) if p and norm(p) not in norm(addr_norm)]
+    return ", ".join(parts)
+
+
 def completeness(rec):
     keys = ["phone", "web_site", "open_hours", "address", "category", "review_count"]
     return sum(1 for k in keys if rec.get(k)) + (rec.get("review_count") or 0) / 1e6
@@ -456,6 +490,9 @@ def main() -> int:
     if bpath.exists():
         for r in csv.DictReader(open(bpath, encoding="utf-8")):
             batch_time[r["batch"]] = r["started_at"]
+
+    osm_path = OUT / "geocode-osm.json"
+    osm = json.loads(osm_path.read_text(encoding="utf-8")) if osm_path.exists() else {}
 
     raw = []
     for f in sorted([*(OUT / "raw").glob("batch-*.jsonl"), *(OUT / "raw").glob("retry-*.jsonl")]):
@@ -492,6 +529,19 @@ def main() -> int:
         else:
             rec["_reason"] = why
             rejected.append(rec)
+    n_kept = len(kept)
+
+    # 2b) coordinates that OpenStreetMap places outside Vietnam (bad Google pins)
+    still = []
+    for rec in kept:
+        g = osm.get(rec.get("place_id") or "")
+        dn = norm((g or {}).get("display_name", ""))
+        if g and dn and not dn.endswith("viet nam"):
+            rec["_reason"] = f"toạ độ nằm ngoài Việt Nam ({g['display_name']}) — ghim sai trên Google"
+            rejected.append(rec)
+        else:
+            still.append(rec)
+    kept = still
     n_kept = len(kept)
 
     # 3) fuzzy dedup: similar name and < 150 m apart
@@ -560,9 +610,14 @@ def main() -> int:
         conf = rec["_conf"]
         if rec["_prov_src"] == "query" and conf == "high":
             conf = "medium"
+        address = normalize_address(rec.get("address") or "", rec.get("title") or "")
+        street = osm_street_prefix(rec, osm, address)
+        if street:
+            address = f"{street}, {address}" if address else street
+            notes.append(f"đường/số nhà suy từ toạ độ (OpenStreetMap), cần kiểm tra: {street}")
         out_rows.append({
             "name": name,
-            "address": normalize_address(rec.get("address") or "", rec.get("title") or ""),
+            "address": address,
             "city": rec["_prov"],
             "province_new": rec["_prov"],
             "province_old": rec["_prov_old"],

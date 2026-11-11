@@ -6,13 +6,14 @@ Dữ liệu được cào từ Google Maps ngày **11/11/2026** để **duyệt 
 
 | File | Nội dung |
 |---|---|
-| `courts-candidates.csv` | **2.040 sân** ứng viên, theo cột của bảng `courts` (UTF-8 có BOM, mở được bằng Excel) |
-| `loai-bo.csv` | 97 địa điểm bị loại, kèm lý do (UTF-8 có BOM) |
+| `courts-candidates.csv` | **2.037 sân** ứng viên, theo cột của bảng `courts` (UTF-8 có BOM, mở được bằng Excel) |
+| `loai-bo.csv` | 100 địa điểm bị loại, kèm lý do (UTF-8 có BOM) |
 | `tinh-34.csv` | 34 tỉnh/thành mới theo Nghị quyết 202/2025/QH15 (hiệu lực 1/7/2025), kèm tên tỉnh cũ và nguồn |
 | `queries.txt`, `queries-manifest.csv` | 254 truy vấn đã chạy (id, loại, tỉnh, depth, lưới toạ độ) |
 | `queries-retry.csv` | 26 truy vấn chạy lại có `-geo` (xem phần “Lỗi gặp phải”) |
 | `raw/batch-*.jsonl`, `raw/retry-*.jsonl` | Output thô của từng lô, **đã bỏ** review, tên người review, ảnh, email và id chủ sở hữu |
 | `raw/batches.csv` | Nhật ký từng lô: truy vấn, số kết quả, số lỗi, thời gian, lệnh |
+| `geocode-osm.json` | Kết quả tra ngược toạ độ OpenStreetMap cho 472 sân không có tên đường (Data © OpenStreetMap contributors, ODbL 1.0) |
 | `clean-stats.json` | Số liệu thống kê dùng trong README này |
 
 ## Lệnh đã chạy
@@ -32,7 +33,9 @@ python3 scripts/pickleball/run_batches.py
 GMS_MANIFEST=out/queries-retry.csv GMS_BATCH_PREFIX=retry GMS_PAUSE_S=30 \
   python3 scripts/pickleball/run_batches.py
 
-# Bước 3: làm sạch
+# Bước 3: làm sạch (lần 1 để có danh sách), tra ngược toạ độ cho sân thiếu tên đường, rồi làm sạch lại
+python3 scripts/pickleball/clean_courts.py
+python3 scripts/pickleball/geocode_missing.py   # Nominatim, 1 yêu cầu/giây, có cache
 python3 scripts/pickleball/clean_courts.py
 ```
 
@@ -56,8 +59,8 @@ Môi trường chạy: playwright-go cần driver 1.57.0 nhưng CDN cũ trả 40
 |---|---:|
 | Kết quả thô (mọi lô, gồm cả trùng giữa các truy vấn) | 3.134 |
 | Sau gộp theo `place_id` | 2.137 |
-| Sau lọc (đúng là sân pickleball) | 2.052 |
-| Sau gộp trùng (tên giống và cách nhau < 150 m) | **2.040** |
+| Sau lọc (đúng là sân pickleball, toạ độ trong Việt Nam) | 2.049 |
+| Sau gộp trùng (tên giống và cách nhau < 150 m) | **2.037** |
 
 Lý do loại (`loai-bo.csv`):
 
@@ -67,6 +70,7 @@ Lý do loại (`loai-bo.csv`):
 | Không liên quan pickleball (sân cầu lông, sân bóng, … không nhắc pickleball) | 34 |
 | Trùng (tên giống, cách < 150 m) | 12 |
 | Tên cho thấy là cửa hàng dụng cụ | 3 |
+| Toạ độ nằm ngoài Việt Nam (3 sân cùng ghim tại Vapy, Saravane, Lào — ghim sai trên Google) | 3 |
 | Không có toạ độ | 1 |
 | Sân tennis thuần | 1 |
 | Huấn luyện viên / lớp học | 1 |
@@ -75,7 +79,7 @@ Lý do loại (`loai-bo.csv`):
 
 | # | province_new | Số sân | high | medium | low |
 |---|---|---:|---:|---:|---:|
-| 1 | Hồ Chí Minh | 424 | 189 | 108 | 127 |
+| 1 | Hồ Chí Minh | 423 | 189 | 107 | 127 |
 | 2 | Hà Nội | 311 | 175 | 87 | 49 |
 | 3 | Đà Nẵng | 142 | 70 | 30 | 42 |
 | 4 | Hải Phòng | 104 | 29 | 54 | 21 |
@@ -88,8 +92,8 @@ Lý do loại (`loai-bo.csv`):
 | 11 | An Giang | 45 | 13 | 16 | 16 |
 | 12 | Hưng Yên | 44 | 14 | 18 | 12 |
 | 13 | Tây Ninh | 43 | 11 | 19 | 13 |
-| 14 | Đắk Lắk | 43 | 22 | 9 | 12 |
-| 15 | Ninh Bình | 42 | 19 | 12 | 11 |
+| 14 | Ninh Bình | 42 | 19 | 12 | 11 |
+| 15 | Đắk Lắk | 42 | 22 | 9 | 11 |
 | 16 | Khánh Hòa | 39 | 15 | 14 | 10 |
 | 17 | Quảng Ninh | 39 | 16 | 14 | 9 |
 | 18 | Quảng Ngãi | 37 | 19 | 9 | 9 |
@@ -101,8 +105,8 @@ Lý do loại (`loai-bo.csv`):
 | 24 | Lào Cai | 29 | 6 | 14 | 9 |
 | 25 | Cà Mau | 28 | 11 | 11 | 6 |
 | 26 | Thái Nguyên | 28 | 10 | 13 | 5 |
-| 27 | Vĩnh Long | 28 | 12 | 9 | 7 |
-| 28 | Huế | 27 | 10 | 9 | 8 |
+| 27 | Huế | 27 | 10 | 9 | 8 |
+| 28 | Vĩnh Long | 27 | 12 | 9 | 6 |
 | 29 | Lạng Sơn | 24 | 4 | 15 | 5 |
 | 30 | Tuyên Quang | 24 | 7 | 10 | 7 |
 | 31 | Sơn La | 20 | 8 | 9 | 3 |
@@ -115,8 +119,8 @@ Lý do loại (`loai-bo.csv`):
 ## Mức tin cậy (`confidence`)
 
 - **high (836)**: danh mục chính trên Google là “Sân pickleball”.
-- **medium (669)**: danh mục phụ là “Sân pickleball”, hoặc tên có “pickleball” và danh mục là sân thể thao (tổ hợp thể thao, sân chơi, sân tennis, …), hoặc CLB thể thao có chữ “Sân/Court” trong tên.
-- **low (535)**: tên có pickleball nhưng danh mục là “Câu lạc bộ thể thao” và tên không ghi rõ là sân (có thể chỉ là CLB, không có sân riêng); hoặc danh mục lạ (quán cà phê, xưởng, cửa hàng có chữ “Sân”); hoặc chỉ phần mô tả nhắc tới pickleball. **Nên duyệt kỹ nhóm này.**
+- **medium (668)**: danh mục phụ là “Sân pickleball”, hoặc tên có “pickleball” và danh mục là sân thể thao (tổ hợp thể thao, sân chơi, sân tennis, …), hoặc CLB thể thao có chữ “Sân/Court” trong tên.
+- **low (533)**: tên có pickleball nhưng danh mục là “Câu lạc bộ thể thao” và tên không ghi rõ là sân (có thể chỉ là CLB, không có sân riêng); hoặc danh mục lạ (quán cà phê, xưởng, cửa hàng có chữ “Sân”); hoặc chỉ phần mô tả nhắc tới pickleball. **Nên duyệt kỹ nhóm này.**
 
 ## Chuẩn hoá các cột
 
@@ -124,7 +128,7 @@ Lý do loại (`loai-bo.csv`):
 |---|---|
 | Mọi cột chữ | Unicode NFC (Google trả lẫn NFC/NFD, vd. hai kiểu “Câu lạc bộ thể thao” trông giống nhau nhưng khác byte), bỏ khoảng trắng thừa. |
 | `name` | Tên viết HOA toàn bộ → viết hoa chữ cái đầu mỗi từ (`SÂN PICKLEBALL TIÊN LỤC` → `Sân Pickleball Tiên Lục`), giữ viết tắt (`CLB`, `PPA`, `HTD`, mã có số như `CK77`). Mọi biến thể `pickle ball / PickleBall / Pickelball / Pickleballs …` → `Pickleball`; `Clb` → `CLB`. Tên gốc trên Google ghi trong `notes` (`tên gốc trên Google: …`) khi có thay đổi. |
-| `address` | Bỏ `, Việt Nam` và mã bưu chính; bỏ phần `PlusCode + tên sân` ở đầu; mở rộng viết tắt: `Đ.` → `Đường`, `P.` → `Phố`, `Ng.` → `Ngõ`, `Ngh.` → `Ngách`, `KP.` → `Khu phố`, `QL` → `Quốc lộ`, `TL` → `Tỉnh lộ`. |
+| `address` | Có ở mọi dòng. 472 sân không có số nhà/tên đường trên Google (chỉ Plus Code + tên sân, hoặc trống). Với các sân này, phần đường/khu vực được **suy từ toạ độ qua OpenStreetMap Nominatim** (`scripts/pickleball/geocode_missing.py`, cache ở `geocode-osm.json`): 144 sân được bổ sung, có ghi chú `đường/số nhà suy từ toạ độ (OpenStreetMap), cần kiểm tra: …` trong `notes`. Chỉ bổ sung khi điểm OSM cách sân ≤ 300 m và địa chỉ Google chưa có tên đường. Số còn lại OSM không có tên đường gần đó, nên chỉ có khu vực, phường, tỉnh. Đường suy từ toạ độ là đường gần nhất, có thể không phải lối vào sân. |
 | `city`, `province_new` | Tên đơn vị MỚI, không có “TP.”/“Thành phố”/“Tỉnh” (`Hồ Chí Minh`, `Hà Nội`, `Lâm Đồng`…), khớp cột `new_name` của `tinh-34.csv`. |
 | `province_old` | Tên tỉnh cũ đúng như trong `tinh-34.csv`, chỉ điền khi địa chỉ còn dùng tên cũ. |
 | `lat`, `lng` | Số thập phân, 7 chữ số sau dấu chấm. |
@@ -146,8 +150,8 @@ Lý do loại (`loai-bo.csv`):
 | `hours_open` / `hours_close` | Có ở 1.571 dòng. Nếu giờ khác nhau theo ngày, lấy khung phổ biến nhất và ghi đủ trong `notes`. “Mở cửa cả ngày” được ghi là `00:00`–`23:59`. Nhiều khung trong một ngày thì lấy giờ mở sớm nhất và giờ đóng muộn nhất (ghi đủ trong `notes`). |
 | `address` | Có ở 2.036/2.040 dòng (4 dòng trống). 468 sân không có số nhà/tên đường trên Google (Google chỉ ghi Plus Code + tên sân); sau chuẩn hoá các địa chỉ này chỉ còn khu vực, phường, tỉnh (vd. `Việt Hưng, Quảng Ninh`). Vẫn định vị chính xác bằng `lat`/`lng`, nhưng nên bổ sung địa chỉ chữ khi duyệt. |
 | `province_old` | Chỉ 10 dòng: hầu hết địa chỉ trên Google đã dùng tên tỉnh mới. Cột này chỉ được điền khi địa chỉ còn ghi tên tỉnh cũ. |
-| `province_new` / `city` | Suy từ thành phần cuối của địa chỉ (2.036 dòng). 1 dòng suy từ sân gần nhất (< 15 km) và 3 dòng suy từ truy vấn, đều có ghi chú trong `notes`. |
-| `phone` | Có ở 1.629 dòng. |
+| `province_new` / `city` | Suy từ thành phần cuối của địa chỉ (2.036 dòng); 1 dòng suy từ sân gần nhất (< 15 km), có ghi chú trong `notes`. |
+| `phone` | Có ở 1.627 dòng. |
 | `rating`, `rating_count` | Lấy từ Google tại thời điểm cào, thay đổi theo thời gian. |
 | `category` | Danh mục chính trên Google, do chủ địa điểm tự chọn (giữ nguyên tên danh mục, chỉ chuẩn hoá Unicode). Nhiều sân để “Câu lạc bộ thể thao”. |
 | `retrieved_at` | Thời điểm bắt đầu lô cào chứa dòng đó (UTC). |
