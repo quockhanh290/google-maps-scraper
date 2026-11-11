@@ -329,6 +329,118 @@ def maps_url(rec):
     return (rec.get("link") or "").split("&g_ep=")[0]
 
 
+# ---------------------------------------------------------------- normalization
+
+def nfc(obj):
+    """Unicode-NFC every string in a JSON value (Google mixes NFC and NFD)."""
+    if isinstance(obj, str):
+        return re.sub(r"\s+", " ", unicodedata.normalize("NFC", obj)).strip()
+    if isinstance(obj, list):
+        return [nfc(v) for v in obj]
+    if isinstance(obj, dict):
+        return {k: nfc(v) for k, v in obj.items()}
+    return obj
+
+
+# "pickle ball", "PickleBall", "Pickelball", ... -> "Pickleball"
+PB_SPELLING_RE = re.compile(
+    r"\b(?:pickerball|pickle\s*balls?|pick(?:el|e|c?le)?balls?|picklebal|pikl?eballs?|pickellballs?)\b",
+    re.IGNORECASE,
+)
+KEEP_UPPER = {"CLB", "TT", "TTTT", "TDTT", "VN", "KDC", "KCN", "KĐT", "ĐH", "THPT", "THCS", "UBND", "HCM"}
+
+
+def _title_word(w: str) -> str:
+    core = re.sub(r"[^\wÀ-ỹ]", "", w)
+    if not core or any(ch.isdigit() for ch in core) or core in KEEP_UPPER:
+        return w
+    if len(core) <= 3 and not re.search(r"[AĂÂEÊIOÔƠUƯYÁÀẢÃẠẮẰẲẴẶẤẦẨẪẬÉÈẺẼẸẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌỐỒỔỖỘỚỜỞỠỢÚÙỦŨỤỨỪỬỮỰÝỲỶỸỴ]", core):
+        return w  # consonant-only short tokens are acronyms: TLT, PSC, HPC
+    return w[:1] + w[1:].lower()
+
+
+def normalize_name(name: str) -> str:
+    n = nfc(name)
+    letters = [c for c in n if c.isalpha()]
+    if letters and sum(c.isupper() for c in letters) / len(letters) > 0.9 and len(letters) > 3:
+        n = " ".join(_title_word(w) for w in n.split(" "))
+    else:
+        # Mixed case: still fix ALL-CAPS Vietnamese words ("Sân HỘI HỢP"), keep short
+        # ASCII acronyms such as PPA, UMT, MD.
+        def fix(w):
+            core = re.sub(r"[^\wÀ-ỹ]", "", w)
+            if core.isupper() and core not in KEEP_UPPER and not any(ch.isdigit() for ch in core) and (
+                    len(core) >= 4 or not core.isascii()):
+                return _title_word(w)
+            return w
+        n = " ".join(fix(w) for w in n.split(" "))
+    n = n.replace(" | ", " - ")
+    n = PB_SPELLING_RE.sub("Pickleball", n)
+    n = re.sub(r"\bclb\b", "CLB", n, flags=re.IGNORECASE)
+    n = re.sub(r"\bsân\b", "Sân", n) if n.lower().startswith("sân") else n
+    return n[:1].upper() + n[1:]
+
+
+PLUS_CODE_RE = re.compile(r"^[23456789CFGHJMPQRVWX]{4,8}\+[23456789CFGHJMPQRVWX]{2,3}\b\s*")
+ADDR_ABBR = [
+    (r"\bĐ\.\s*", "Đường "), (r"\bP\.\s*", "Phố "), (r"\bNg\.\s*", "Ngõ "),
+    (r"\bNgh\.\s*", "Ngách "), (r"\bK[Pp]\.\s*", "Khu phố "), (r"\bTX\.\s*", "Thị xã "),
+    (r"\bTT\.\s*", "Thị trấn "), (r"\bTP\.\s*", "Thành phố "), (r"\bQL\s*(\d)", r"Quốc lộ \1"),
+    (r"\bTL\s*(\d)", r"Tỉnh lộ \1"),
+]
+
+
+def normalize_address(addr: str, name: str) -> str:
+    """Drop country, postal codes and a leading 'PLUSCODE <place name>' part; expand abbreviations."""
+    a = nfc(addr)
+    if not a:
+        return ""
+    parts = [p.strip() for p in a.split(",") if p.strip()]
+    if parts and norm(parts[-1]) in ("viet nam", "vietnam"):
+        parts = parts[:-1]
+    parts = [re.sub(r"\s+\d{5,6}$", "", p) for p in parts]
+    if parts and PLUS_CODE_RE.match(parts[0]):
+        rest = PLUS_CODE_RE.sub("", parts[0]).strip()
+        # Google puts the place name after the plus code; that is not a street address.
+        if not rest or difflib.SequenceMatcher(None, norm(rest), norm(name)).ratio() >= 0.6 \
+                or "pickle" in norm(rest):
+            parts = parts[1:]
+        else:
+            parts[0] = rest
+    out = ", ".join(parts)
+    for pat, rep in ADDR_ABBR:
+        out = re.sub(pat, rep, out)
+    return re.sub(r"\s+", " ", out).strip(" ,")
+
+
+def normalize_phone(phone: str) -> str:
+    """E.164 without spaces, e.g. +84798256666."""
+    digits = re.sub(r"\D", "", phone or "")
+    if not digits:
+        return ""
+    if digits.startswith("84"):
+        return "+" + digits
+    if digits.startswith("0"):
+        return "+84" + digits[1:]
+    return "+" + digits
+
+
+TRACKING_PARAMS = re.compile(r"^(utm_\w+|fbclid|gclid|mibextid|igsh|igshid|ref|rdid|share_url|si)$", re.I)
+
+
+def clean_url(url: str) -> str:
+    if not url:
+        return ""
+    u = urllib.parse.urlsplit(url.strip())
+    q = [(k, v) for k, v in urllib.parse.parse_qsl(u.query, keep_blank_values=True) if not TRACKING_PARAMS.match(k)]
+    return urllib.parse.urlunsplit((u.scheme.lower(), u.netloc.lower(), u.path, urllib.parse.urlencode(q), ""))
+
+
+def iso_utc(ts: str) -> str:
+    """'2026-11-11T13:04:07+0000' -> '2026-11-11T13:04:07Z'."""
+    return re.sub(r"\+0000$|\+00:00$", "Z", ts or "")
+
+
 def completeness(rec):
     keys = ["phone", "web_site", "open_hours", "address", "category", "review_count"]
     return sum(1 for k in keys if rec.get(k)) + (rec.get("review_count") or 0) / 1e6
@@ -350,8 +462,8 @@ def main() -> int:
         retrieved = batch_time.get(f.stem, "")
         for line in open(f, encoding="utf-8"):
             if line.strip():
-                rec = json.loads(line)
-                rec["_retrieved_at"] = retrieved
+                rec = nfc(json.loads(line))
+                rec["_retrieved_at"] = iso_utc(retrieved)
                 qid = (rec.get("input_id") or "").split("-")[0]
                 rec["_qid"] = qid
                 rec["_query_province"] = manifest.get(qid, {}).get("province_new", "")
@@ -437,29 +549,33 @@ def main() -> int:
             notes.append("tạm thời đóng cửa")
         site = rec.get("web_site") or ""
         burl = booking_url(rec)
+        site, burl = clean_url(site), clean_url(burl)
         if site and site != burl:
             notes.append(f"website: {site}")
+        name = normalize_name(rec.get("title") or "")
+        if name != (rec.get("title") or ""):
+            notes.append(f"tên gốc trên Google: {rec.get('title')}")
         if rec.get("_merged"):
             notes.append("gộp trùng: " + ", ".join(map(str, rec["_merged"])))
         conf = rec["_conf"]
         if rec["_prov_src"] == "query" and conf == "high":
             conf = "medium"
         out_rows.append({
-            "name": rec.get("title") or "",
-            "address": rec.get("address") or "",
+            "name": name,
+            "address": normalize_address(rec.get("address") or "", rec.get("title") or ""),
             "city": rec["_prov"],
             "province_new": rec["_prov"],
             "province_old": rec["_prov_old"],
             "lat": f"{rec['latitude']:.7f}",
             "lng": f"{rec['longtitude']:.7f}",
-            "phone": rec.get("phone") or "",
+            "phone": normalize_phone(rec.get("phone")),
             "hours_open": o,
             "hours_close": c,
             "price_per_hour": parse_price(rec),
             "booking_url": burl,
             "google_maps_url": maps_url(rec),
-            "rating": rec.get("review_rating") or "",
-            "rating_count": rec.get("review_count") or "",
+            "rating": f"{float(rec['review_rating']):.1f}" if rec.get("review_rating") else "",
+            "rating_count": int(rec["review_count"]) if rec.get("review_count") else "",
             "place_id": rec.get("place_id") or "",
             "category": rec.get("category") or "",
             "retrieved_at": rec["_retrieved_at"],
