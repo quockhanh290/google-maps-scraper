@@ -1,16 +1,16 @@
 {
-  "raw_rows": 2902,
-  "unique_place_id": 2037,
-  "after_filter": 1970,
-  "after_dedup": 1958,
+  "raw_rows": 3134,
+  "unique_place_id": 2137,
+  "after_filter": 2052,
+  "after_dedup": 2040,
   "rejected_by_reason": [
     [
       "cửa hàng/nhà cung cấp dụng cụ, không phải sân",
-      37
+      45
     ],
     [
       "không liên quan pickleball",
-      26
+      34
     ],
     [
       "trùng (tên giống, < 150 m)",
@@ -18,7 +18,7 @@
     ],
     [
       "tên cho thấy cửa hàng dụng cụ",
-      2
+      3
     ],
     [
       "không có toạ độ",
@@ -27,12 +27,16 @@
     [
       "sân tennis thuần, không nhắc pickleball",
       1
+    ],
+    [
+      "huấn luyện viên/lớp học, không phải sân",
+      1
     ]
   ],
   "by_province": [
     [
       "Hồ Chí Minh",
-      412
+      424
     ],
     [
       "Hà Nội",
@@ -40,7 +44,7 @@
     ],
     [
       "Đà Nẵng",
-      137
+      142
     ],
     [
       "Hải Phòng",
@@ -55,16 +59,32 @@
       55
     ],
     [
+      "Đồng Nai",
+      54
+    ],
+    [
       "Bắc Ninh",
       51
     ],
     [
+      "Gia Lai",
+      51
+    ],
+    [
       "Cần Thơ",
-      46
+      50
+    ],
+    [
+      "An Giang",
+      45
     ],
     [
       "Hưng Yên",
       44
+    ],
+    [
+      "Tây Ninh",
+      43
     ],
     [
       "Đắk Lắk",
@@ -83,15 +103,7 @@
       39
     ],
     [
-      "An Giang",
-      38
-    ],
-    [
       "Quảng Ngãi",
-      37
-    ],
-    [
-      "Đồng Nai",
       37
     ],
     [
@@ -103,24 +115,16 @@
       36
     ],
     [
+      "Đồng Tháp",
+      36
+    ],
+    [
       "Thanh Hóa",
       34
     ],
     [
-      "Gia Lai",
-      32
-    ],
-    [
       "Nghệ An",
       32
-    ],
-    [
-      "Đồng Tháp",
-      32
-    ],
-    [
-      "Tây Ninh",
-      30
     ],
     [
       "Lào Cai",
@@ -131,15 +135,15 @@
       28
     ],
     [
+      "Thái Nguyên",
+      28
+    ],
+    [
       "Vĩnh Long",
       28
     ],
     [
       "Huế",
-      27
-    ],
-    [
-      "Thái Nguyên",
       27
     ],
     [
@@ -170,21 +174,21 @@
   "confidence": [
     [
       "high",
-      814
+      836
     ],
     [
       "medium",
-      645
+      669
     ],
     [
       "low",
-      499
+      535
     ]
   ],
   "province_source": [
     [
       "address",
-      1954
+      2036
     ],
     [
       "query",
@@ -196,25 +200,25 @@
     ]
   ],
   "filled": {
-    "name": 1958,
-    "address": 1954,
-    "city": 1958,
-    "province_new": 1958,
-    "province_old": 9,
-    "lat": 1958,
-    "lng": 1958,
-    "phone": 1564,
-    "hours_open": 1514,
-    "hours_close": 1514,
+    "name": 2040,
+    "address": 2036,
+    "city": 2040,
+    "province_new": 2040,
+    "province_old": 10,
+    "lat": 2040,
+    "lng": 2040,
+    "phone": 1629,
+    "hours_open": 1571,
+    "hours_close": 1571,
     "price_per_hour": 0,
-    "booking_url": 74,
-    "google_maps_url": 1958,
-    "rating": 1781,
-    "rating_count": 1781,
-    "place_id": 1958,
-    "category": 1946,
-    "retrieved_at": 1958,
-    "confidence": 1958,
-    "notes": 993
+    "booking_url": 78,
+    "google_maps_url": 2040,
+    "rating": 1855,
+    "rating_count": 1855,
+    "place_id": 2040,
+    "category": 2027,
+    "retrieved_at": 2040,
+    "confidence": 2040,
+    "notes": 1051
   }
 }
