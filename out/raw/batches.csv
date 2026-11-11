@@ -1,0 +1,2 @@
+batch,query_ids,depth,kind,results,errors,exit_code,started_at,elapsed_s,command
+batch-001,q001 q002 q003 q004 q005 q006 q007 q008 q009 q010 q011 q012 q013 q014 q015 q016 q017 q018 q019 q020,3,province,187,3,0,2026-11-11T12:49:21+0000,123,-input /tmp/claude-0/-home-user-google-maps-scraper/a952b5bb-e56d-5ba0-a07e-12e50ccbdb96/scratchpad/work/batch-001.txt -results /tmp/claude-0/-home-user-google-maps-scraper/a952b5bb-e56d-5ba0-a07e-12e50ccbdb96/scratchpad/work/batch-001.json -json -lang vi -depth 3 -c 2 -exit-on-inactivity 90s
